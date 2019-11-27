@@ -1,0 +1,15 @@
+# Custom command 'Create': Create a new project folder under ~/Projects and initialize git
+create () {
+    echo "Creating a new project . . ."
+    cd ~/Projects
+    python CreateAProject.py $1
+    echo "Successfully create a new project."
+    cd $1
+
+    echo "# $1 " >> README.md
+    git init
+    git add README.md
+    git commit -m "first commit"
+    git remote add origin https://github.com/hhphu/$1.git
+    git push -u origin master
+}
