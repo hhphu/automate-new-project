@@ -12,7 +12,7 @@ def create_a_project():
 
     ########### Log in credentials ###########
     username_cred = "hhphu"
-    password_cred = "MyGitHubPasswordIsSoStrong"
+    password_cred = "It'sthe2ndPassword>.<"
 
     ########### Create new repository page ###########
     repository_name_field = "repository_name"
