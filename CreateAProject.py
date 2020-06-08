@@ -1,65 +1,74 @@
-import sys
+#!/usr/bin/python3
+
+import getpass
 import os
+import time
+import sys
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 
+VARIABLES ={
+    'createRepository_xpath' : '//button[@class="btn btn-primary first-in-line"]',
+    'login_name' : 'login',
+    'password_name' : 'password',
+    'repository_id' : 'repository_name',
+    'signIn_name' : 'commit',
+    'url_login' : 'https://github.com/login',
+    'url_newRepository' : 'https://github.com/new'
+}
 
 def create_a_project():
-    ########### Elements' attributes on Log In Page ###########
-    username_field = "login"
-    password_field = "password"
-    sign_in_field = "commit"
 
-    ########### Log in credentials ###########
-    username_cred = "hhphu"
-    password_cred = "It'sthe2ndPassword>.<"
+    # Acqurire the path to the "Projects" directory
+    projects_path = input("Input your Projects directory: ")
 
-    ########### Create new repository page ###########
-    repository_name_field = "repository_name"
-    create_repository_button_xpath = "//button[@class='btn btn-primary first-in-line']"
+    # Acquire login credentials from users
+    login_cred = input("Username or Email Address: ")
+    password_cred = getpass.getpass("Password: ")
 
-    # Path to the Projects Folder. Modify the path if needed
-    projects_path = '/Users/phu/Projects'
-
-    # Path to the chromedriver. Modify the path if needed
-    chromedriver_path="/usr/local/bin/chromedriver"
-
-    # Take the new folder's name & create a new folder
+    # Take the new folder's name 
     folderName = str(sys.argv[1])
-    #print("Current Directory: " + os.getcwd())
-    os.chdir(projects_path)
-    #print("Current Directory: " + os.getcwd())
-    os.mkdir(folderName)
-    new_project_path = os.path.join(projects_path , folderName)
-    os.chdir(new_project_path)
-    #print("Current Directory: " + os.getcwd())
+
+    # Path to the chromedriver 
+    chromedriver_path="./chromedriver.exe"
 
     # Go to GitHub login page.
     browser = webdriver.Chrome(chromedriver_path)
-    browser.get('https://github.com/login')
+    browser.get(VARIABLES['url_login'])
     browser.fullscreen_window()
 
     # Log in GitHub
-    username = browser.find_element_by_name(username_field)
-    password = browser.find_element_by_name(password_field)
-    sign_in = browser.find_element_by_name(sign_in_field)
-    username.click()
-    username.send_keys(username_cred)
-    password.click()
+    login = browser.find_element_by_name(VARIABLES['login_name'])
+    password = browser.find_element_by_name(VARIABLES['password_name'])
+    signIn = browser.find_element_by_name(VARIABLES['signIn_name'])
+    login.send_keys(login_cred)
     password.send_keys(password_cred)
-    sign_in.click()
+    signIn.click()
+    time.sleep(3)
 
-    # Create a new repository
-    browser.get("https://github.com/new")
-    repository_name = browser.find_element_by_id(repository_name_field)
-    repository_name.send_keys(folderName)
+    # Go to new repository page
+    browser.get(VARIABLES['url_newRepository'])
 
-    # wait till the Create Repository button clickable
-    browser.implicitly_wait(10)
-    create_repository_button = browser.find_element_by_xpath(create_repository_button_xpath)
-    create_repository_button.submit()
-    browser.implicitly_wait(10)
+    # Input the new repository name
+    repositoryName = browser.find_element_by_id(VARIABLES['repository_id'])
+    repositoryName.send_keys(folderName)
+
+    # Create a new repository with the given name
+    createRepository = browser.find_element_by_xpath(VARIABLES['createRepository_xpath'])
+    createRepository.submit()
+
+    time.sleep(10)
     browser.quit()
+ 
+    # Change to the Project directory
+    os.chdir(projects_path) 
+
+    # Create a new folder with the input name
+    os.mkdir(folderName)
+
+    # Change directory to newly created folder
+    new_project_path = os.path.join('.' , folderName)
+    os.chdir(new_project_path)
 
 
 if __name__ == "__main__":
